@@ -5,9 +5,9 @@ import (
 	"os"
 	"syscall"
 
-	"github.com/xiaokangwang/AndroidLibV2ray/CoreI"
-	"github.com/xiaokangwang/AndroidLibV2ray/Process/Escort"
-	"github.com/xiaokangwang/AndroidLibV2ray/configure"
+	"github.com/zhaoguomanong/AndroidLibV2ray/CoreI"
+	"github.com/zhaoguomanong/AndroidLibV2ray/Process/Escort"
+	"github.com/zhaoguomanong/AndroidLibV2ray/configure"
 	"github.com/xiaokangwang/waVingOcean"
 	voconfigure "github.com/xiaokangwang/waVingOcean/configure"
 

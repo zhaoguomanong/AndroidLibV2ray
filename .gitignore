@@ -6,3 +6,7 @@ conf/demo/
 demo/
 libv2ray.aar
 assets/
+.idea/
+cachefiles
+log.txt
+.runtime

@@ -1,0 +1,34 @@
+1.手动直接运行：
+root 用户运行
+export v2ray_core_version="v4.13.0" \
+&& ./libv2ray.sh
+
+2.jenkins调用：
+
+root 用户调用 jenkinsExecutor.sh 脚本
+
+例如：
+
+cd /root/AndroidLibV2ray/data \
+    && git reset --hard \
+    && git fetch \
+    && git checkout master \
+    && git rebase \
+    && bash jenkinsExecutor.sh
+
+可传入如下参数：
+
+export v2ray_core_version="v2ray_tag"
+
+v2ray_tag 可以取值 LatestRelease v4.13.0 v4.12.0 .... v3.10
+
+其中LatestRelease为特殊值，表示自动检测v2ray-core最新release的正式版本
+如果不传递v2ray_core_version则按LatestRelease逻辑处理,
+jenkins中v2ray_core_version可以通过配置编译参数来实现传递
+本脚本最低支持v3.10版本的v2ray编译
+
+
+3.输出：
+
+编译成功后libv2ray.aar 位于data/cachefiles/下面
+

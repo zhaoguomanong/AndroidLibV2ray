@@ -2,7 +2,7 @@ sudo: required
 language: go
 go:
   - "1.11"
-go_import_path: github.com/xiaokangwang/AndroidLibV2ray
+go_import_path: github.com/zhaoguomanong/AndroidLibV2ray
 git:
   depth: 5
 addons:
@@ -15,7 +15,7 @@ before_script:
 - make downloadGoMobile
 - make buildVGO
 script:
-- go test -p 1 -tags json -v github.com/xiaokangwang/AndroidLibV2ray/...
+- go test -p 1 -tags json -v github.com/zhaoguomanong/AndroidLibV2ray/...
 - make BuildMobile
 after_success:
 deploy:

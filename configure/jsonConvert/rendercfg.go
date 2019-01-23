@@ -7,8 +7,8 @@ import (
 	"os"
 	"strings"
 
-	"github.com/xiaokangwang/AndroidLibV2ray/CoreI"
-	"github.com/xiaokangwang/AndroidLibV2ray/Process"
+	"github.com/zhaoguomanong/AndroidLibV2ray/CoreI"
+	"github.com/zhaoguomanong/AndroidLibV2ray/Process"
 )
 
 func (v *JsonToPbConverter) renderAll() {
