@@ -11,6 +11,7 @@ cd `dirname $0`
 cd ..
 projectRoot=$(pwd)
 source ${projectRoot}/CommonUtils.sh
+source ${projectRoot}/constants.sh
 
 export domains="$@"
 
@@ -18,7 +19,9 @@ export domains="$@"
 
 yourSSLDomainName=$(echo "$domains" | awk '{print $1}')
 
-nginxRuntimePath="$projectRoot/nginx/.runtime"
+export override_under_home="/home/jenkins"
+findUnderUserHome
+nginxRuntimePath="$under_home/$CACHE_FOLDER/nginx/.runtime"
 
 NGNIX_CONFIG_TEMPLET="$projectRoot/nginx/jenkins.nginx.conf"
 NGINX_JENKINS_RUNTIME="$nginxRuntimePath/nginx/jenkins.nginx.conf"
