@@ -30,5 +30,5 @@ jenkins中v2ray_core_version可以通过配置编译参数来实现传递
 
 3.输出：
 
-编译成功后libv2ray.aar 位于data/cachefiles/下面
+编译成功后libv2ray.aar文件路径见终端输出
 
