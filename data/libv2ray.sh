@@ -41,6 +41,7 @@ installBasicDep() {
     dpkg --add-architecture i386
     ${CMD_UPDATE}
     ${CMD_DIST_UPGRADE}
+    ${CMD_INSTALL} curl
     ${CMD_INSTALL} software-properties-common
     ${CMD_INSTALL} libc6:i386 libstdc++6:i386 zlib1g:i386 lib32z1 expect
     ${CMD_INSTALL} zip unzip make expect # NDK stuff
