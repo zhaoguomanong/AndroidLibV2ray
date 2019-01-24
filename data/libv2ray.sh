@@ -466,7 +466,7 @@ fi
 V2RAY_CORE_BUILD_TAG="$INSTALL_CACHE_PATH/$v2ray_core_tag_file"
 LIB_AAR_FILE="${INSTALL_CACHE_PATH}/$libv2ray_aar"
 
-GEO_DAT_CACHE_PATH="${INSTALL_CACHE_PATH}/geo_data"
+GEO_DAT_CACHE_PATH="$under_home/.libv2ray/geo_data"
 GEO_DAT_TIMESTAMP="$GEO_DAT_CACHE_PATH/geo_timestamp"
 
 #########################
