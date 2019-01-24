@@ -21,7 +21,7 @@ yourSSLDomainName=$(echo "$domains" | awk '{print $1}')
 
 export override_under_home="/home/jenkins"
 findUnderUserHome
-nginxRuntimePath="$under_home/$CACHE_FOLDER/nginx/.runtime"
+nginxRuntimePath="$under_home/.libv2ray/nginx/.runtime"
 
 NGNIX_CONFIG_TEMPLET="$projectRoot/nginx/jenkins.nginx.conf"
 NGINX_JENKINS_RUNTIME="$nginxRuntimePath/nginx/jenkins.nginx.conf"
