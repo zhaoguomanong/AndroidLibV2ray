@@ -68,9 +68,8 @@ installGoEnv() {
         return
     fi
     go_Version="go1.11.linux-amd64.tar.gz"
-    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${go_Version}
-    [[ ${fromLocally} = 0 ]] \
-    && wget -O ${go_Version} https://dl.google.com/go/${go_Version}
+    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${go_Version} \
+    || wget -O ${go_Version} https://dl.google.com/go/${go_Version}
     tar -C /usr/local -zxvf ${go_Version}
     rm ${go_Version}
     return 0
@@ -90,18 +89,16 @@ installAndroidSDKNDK() {
 
     # Get SDK tools (link from https://developer.android.com/studio/index.html#downloads)
     sdk_version="sdk-tools-linux-3859397.zip"
-    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${sdk_version}
-    [[ ${fromLocally} = 0 ]] \
-    && wget -O ${sdk_version} https://dl.google.com/android/repository/${sdk_version}
+    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${sdk_version} \
+    || wget -O ${sdk_version} https://dl.google.com/android/repository/${sdk_version}
     mkdir -p ${ANDROID_HOME}
     unzip -o ${sdk_version} -d ${ANDROID_HOME}
     rm ${sdk_version}
 
     # Get NDK (https://developer.android.com/ndk/downloads/index.html)
     ndk_version="android-ndk-r15c-linux-x86_64.zip"
-    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${ndk_version}
-    [[ ${fromLocally} = 0 ]] \
-    && wget -O ${ndk_version} https://dl.google.com/android/repository/${ndk_version}
+    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${ndk_version} \
+    || wget -O ${ndk_version} https://dl.google.com/android/repository/${ndk_version}
     unzip -o ${ndk_version}
     rm ${ndk_version}
 
@@ -116,9 +113,8 @@ installAndroidSDKNDK() {
 
     platform_tools_version="platform-tools_r28.0.1-linux.zip"
 
-    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${platform_tools_version}
-    [[ ${fromLocally} = 0 ]] \
-    && wget -O ${platform_tools_version} https://dl.google.com/android/repository/${platform_tools_version}
+    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${platform_tools_version} \
+    || wget -O ${platform_tools_version} https://dl.google.com/android/repository/${platform_tools_version}
     unzip -o ${platform_tools_version} -d ${ANDROID_HOME}
     rm ${platform_tools_version}
 
