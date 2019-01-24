@@ -477,9 +477,6 @@ while [[ $# > 0 ]];do
         export fromLocally="1"
         echo "use zip from locally"
         ;;
-        --help|-h)
-        HELP="1"
-        ;;
         *)
         UNKNOWN_OPTION="1"
         UNKNOWN_OPTION_VALUE="$key"
