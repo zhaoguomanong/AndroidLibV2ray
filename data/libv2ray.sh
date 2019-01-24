@@ -1,5 +1,7 @@
 #!/bin/bash
 
+fromLocally=0
+
 V2RAY_CORE_URL="v2ray.com/core"
 V2RAY_EXT_URL="v2ray.com/ext"
 LIBV2RAY_GIT_URL="github.com/zhaoguomanong/AndroidLibV2ray"
@@ -25,6 +27,12 @@ clearFiles() {
     #must delete pbinst before compile
     clearPb
     [[ -f "$V2RAY_CORE_BUILD_TAG" ]] && rm -f "$V2RAY_CORE_BUILD_TAG"
+}
+
+fileExistenceCheck() {
+    [[ ! -f ${INSTALL_CACHE_PATH}/$1 ]] \
+    && echo "download $1 then put into ${INSTALL_CACHE_PATH} and try again" \
+    && exit 1
 }
 
 installBasicDep() {
@@ -60,7 +68,9 @@ installGoEnv() {
         return
     fi
     go_Version="go1.11.linux-amd64.tar.gz"
-    wget -O ${go_Version} https://dl.google.com/go/${go_Version}
+    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${go_Version}
+    [[ ${fromLocally} = 0 ]] \
+    && wget -O ${go_Version} https://dl.google.com/go/${go_Version}
     tar -C /usr/local -zxvf ${go_Version}
     rm ${go_Version}
     return 0
@@ -80,14 +90,18 @@ installAndroidSDKNDK() {
 
     # Get SDK tools (link from https://developer.android.com/studio/index.html#downloads)
     sdk_version="sdk-tools-linux-3859397.zip"
-    wget -O ${sdk_version} https://dl.google.com/android/repository/${sdk_version}
+    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${sdk_version}
+    [[ ${fromLocally} = 0 ]] \
+    && wget -O ${sdk_version} https://dl.google.com/android/repository/${sdk_version}
     mkdir -p ${ANDROID_HOME}
     unzip -o ${sdk_version} -d ${ANDROID_HOME}
     rm ${sdk_version}
 
     # Get NDK (https://developer.android.com/ndk/downloads/index.html)
     ndk_version="android-ndk-r15c-linux-x86_64.zip"
-    wget -O ${ndk_version} https://dl.google.com/android/repository/${ndk_version}
+    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${ndk_version}
+    [[ ${fromLocally} = 0 ]] \
+    && wget -O ${ndk_version} https://dl.google.com/android/repository/${ndk_version}
     unzip -o ${ndk_version}
     rm ${ndk_version}
 
@@ -101,7 +115,10 @@ installAndroidSDKNDK() {
     cd ${INSTALL_CACHE_PATH}
 
     platform_tools_version="platform-tools_r28.0.1-linux.zip"
-    wget -O ${platform_tools_version} https://dl.google.com/android/repository/${platform_tools_version}
+
+    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${platform_tools_version}
+    [[ ${fromLocally} = 0 ]] \
+    && wget -O ${platform_tools_version} https://dl.google.com/android/repository/${platform_tools_version}
     unzip -o ${platform_tools_version} -d ${ANDROID_HOME}
     rm ${platform_tools_version}
 
@@ -451,6 +468,26 @@ LIB_AAR_FILE="${INSTALL_CACHE_PATH}/$libv2ray_aar"
 
 GEO_DAT_CACHE_PATH="${INSTALL_CACHE_PATH}/geo_data"
 GEO_DAT_TIMESTAMP="$GEO_DAT_CACHE_PATH/geo_timestamp"
+
+#########################
+while [[ $# > 0 ]];do
+    key="$1"
+    case ${key} in
+        --local)
+        export fromLocally="1"
+        ;;
+        --help|-h)
+        HELP="1"
+        ;;
+        *)
+        UNKNOWN_OPTION="1"
+        UNKNOWN_OPTION_VALUE="$key"
+        # unknown option
+        ;;
+    esac
+    shift # past argument or value
+done
+###############################
 
 clearFiles
 installBasicDep
