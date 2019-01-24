@@ -475,6 +475,7 @@ while [[ $# > 0 ]];do
     case ${key} in
         --local)
         export fromLocally="1"
+        echo "use zip from locally"
         ;;
         --help|-h)
         HELP="1"
