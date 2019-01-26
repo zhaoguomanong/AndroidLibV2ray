@@ -71,7 +71,7 @@ installGoEnv() {
     [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${go_Version} \
     || wget -O ${go_Version} https://dl.google.com/go/${go_Version}
     tar -C /usr/local -zxvf ${go_Version}
-    rm ${go_Version}
+    [[ ${fromLocally} = 1 ]] || rm ${go_Version}
     return 0
 }
 
@@ -93,14 +93,14 @@ installAndroidSDKNDK() {
     || wget -O ${sdk_version} https://dl.google.com/android/repository/${sdk_version}
     mkdir -p ${ANDROID_HOME}
     unzip -o ${sdk_version} -d ${ANDROID_HOME}
-    rm ${sdk_version}
+    [[ ${fromLocally} = 1 ]] || rm ${sdk_version}
 
     # Get NDK (https://developer.android.com/ndk/downloads/index.html)
     ndk_version="android-ndk-r15c-linux-x86_64.zip"
     [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${ndk_version} \
     || wget -O ${ndk_version} https://dl.google.com/android/repository/${ndk_version}
     unzip -o ${ndk_version}
-    rm ${ndk_version}
+    [[ ${fromLocally} = 1 ]] || rm ${ndk_version}
 
     ACCEPT_LICENSES_ITEM="android-sdk-license-bcbbd656|intel-android-sysimage-license-1ea702d1|android-sdk-license-2742d1c5"
 
@@ -116,7 +116,7 @@ installAndroidSDKNDK() {
     [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${platform_tools_version} \
     || wget -O ${platform_tools_version} https://dl.google.com/android/repository/${platform_tools_version}
     unzip -o ${platform_tools_version} -d ${ANDROID_HOME}
-    rm ${platform_tools_version}
+    [[ ${fromLocally} = 1 ]] || rm ${platform_tools_version}
 
     cd ${ANDROID_HOME}/tools/bin
     cp -f ${SCRIPT_PATH}/reduce.awk ./
