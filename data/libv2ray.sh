@@ -456,6 +456,7 @@ cd "$SCRIPT_PATH" && findUnderUserHome && cd "$SCRIPT_PATH"
 export INSTALL_CACHE_PATH="$under_home/$CACHE_FOLDER"
 if [ ! -d ${INSTALL_CACHE_PATH} ];then
     mkdir -p ${INSTALL_CACHE_PATH}
+    chmod 777 ${INSTALL_CACHE_PATH}
 fi
 
 #for cache build tag
