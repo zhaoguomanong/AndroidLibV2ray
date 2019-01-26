@@ -33,6 +33,7 @@ fileExistenceCheck() {
     [[ ! -f ${INSTALL_CACHE_PATH}/$1 ]] \
     && echo "download $1 then put into ${INSTALL_CACHE_PATH} and try again" \
     && exit 1
+    return 0
 }
 
 installBasicDep() {
