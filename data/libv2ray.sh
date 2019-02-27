@@ -41,12 +41,13 @@ installBasicDep() {
     which java > /dev/null 2>&1 || ${CMD_INSTALL} openjdk-8-jdk
     export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
     export PATH=${JAVA_HOME}/bin:$PATH
-    if [ -d ${ANDROID_HOME} ] \
-    && [ -d ${ANDROID_NDK_HOME} ];then
-        #already install android sdk and ndk,
-        # so basic deps must already be installed return now
-        return
-    fi
+#    if [ -d ${ANDROID_HOME} ] \
+#    && [ -d ${ANDROID_NDK_HOME} ];then
+#        #already install android sdk and ndk,
+#        # so basic deps must already be installed return now
+#        return
+#    fi
+    [[ -d ${ANDROID_HOME} ]] && return
     dpkg --add-architecture i386
     ${CMD_UPDATE}
     ${CMD_DIST_UPGRADE}
@@ -80,13 +81,14 @@ installAndroidSDKNDK() {
     cd ${INSTALL_CACHE_PATH}
     export ANDROID_HOME=${INSTALL_CACHE_PATH}/android-sdk-linux
     export PATH=${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:$PATH
-    export NDK_HOME=${INSTALL_CACHE_PATH}/android-ndk-r15c
-    export ANDROID_NDK_HOME=${NDK_HOME}
-    if [ -d ${ANDROID_HOME} ] \
-    && [ -d ${ANDROID_NDK_HOME} ];then
-        #already install android sdk and ndk return now
-        return
-    fi
+#    export NDK_HOME=${INSTALL_CACHE_PATH}/android-ndk-r15c
+#    export ANDROID_NDK_HOME=${NDK_HOME}
+#    if [ -d ${ANDROID_HOME} ] \
+#    && [ -d ${ANDROID_NDK_HOME} ];then
+#        #already install android sdk and ndk return now
+#        return
+#    fi
+    [[ -d ${ANDROID_HOME} ]] && return
 
     # Get SDK tools (link from https://developer.android.com/studio/index.html#downloads)
     sdk_version="sdk-tools-linux-3859397.zip"
@@ -96,12 +98,12 @@ installAndroidSDKNDK() {
     unzip -o ${sdk_version} -d ${ANDROID_HOME}
     [[ ${fromLocally} = 1 ]] || rm ${sdk_version}
 
-    # Get NDK (https://developer.android.com/ndk/downloads/index.html)
-    ndk_version="android-ndk-r15c-linux-x86_64.zip"
-    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${ndk_version} \
-    || wget -O ${ndk_version} https://dl.google.com/android/repository/${ndk_version}
-    unzip -o ${ndk_version}
-    [[ ${fromLocally} = 1 ]] || rm ${ndk_version}
+#    # Get NDK (https://developer.android.com/ndk/downloads/index.html)
+#    ndk_version="android-ndk-r15c-linux-x86_64.zip"
+#    [[ ${fromLocally} = 1 ]] && fileExistenceCheck ${ndk_version} \
+#    || wget -O ${ndk_version} https://dl.google.com/android/repository/${ndk_version}
+#    unzip -o ${ndk_version}
+#    [[ ${fromLocally} = 1 ]] || rm ${ndk_version}
 
     ACCEPT_LICENSES_ITEM="android-sdk-license-bcbbd656|intel-android-sysimage-license-1ea702d1|android-sdk-license-2742d1c5"
 
@@ -122,6 +124,7 @@ installAndroidSDKNDK() {
     cd ${ANDROID_HOME}/tools/bin
     cp -f ${SCRIPT_PATH}/reduce.awk ./
     yes | ./sdkmanager --verbose "platform-tools" "platforms;android-28" | awk -f reduce.awk
+    ./sdkmanager "ndk-bundle"
     return 0
 }
 
@@ -132,7 +135,8 @@ initGoMobileNDK() {
         #already init NDK return now
         return 0
     fi
-    gomobile init -ndk ${ANDROID_NDK_HOME}
+#    gomobile init -ndk ${ANDROID_NDK_HOME}
+    gomobile init
     return 0
 }
 
