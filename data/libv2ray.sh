@@ -79,8 +79,6 @@ installGoEnv() {
 
 installAndroidSDKNDK() {
     cd ${INSTALL_CACHE_PATH}
-    export ANDROID_HOME=${INSTALL_CACHE_PATH}/android-sdk-linux
-    export PATH=${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:$PATH
 #    export NDK_HOME=${INSTALL_CACHE_PATH}/android-ndk-r15c
 #    export ANDROID_NDK_HOME=${NDK_HOME}
 #    if [ -d ${ANDROID_HOME} ] \
@@ -459,6 +457,8 @@ source ./constants.sh
 cd "$SCRIPT_PATH" && findUnderUserHome && cd "$SCRIPT_PATH"
 #all tmp files will be install under here, sdk, ndk build tag etc.
 export INSTALL_CACHE_PATH="$under_home/$CACHE_FOLDER"
+export ANDROID_HOME=${INSTALL_CACHE_PATH}/android-sdk-linux
+export PATH=${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools:$PATH
 if [ ! -d ${INSTALL_CACHE_PATH} ];then
     mkdir -p ${INSTALL_CACHE_PATH}
     chmod 777 ${INSTALL_CACHE_PATH}
