@@ -24,9 +24,10 @@ fi
 export HOME=/root
 [[ ! -z "$mountDiskCmd" ]] && ${mountDiskCmd}
 ./libv2ray.sh
+exit_code=$?
 [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}
 
-[[ $? != 0 ]] &&  echo "fatal error occur exit 1" && exit 1
+[[ ${exit_code} != 0 ]] &&  echo "fatal error occur exit 1" && exit 1
 
 [[ ! -f "$INSTALL_CACHE_PATH/${AAR}" ]] && { echo "fatal error aar not exist"; exit 1; }
 
