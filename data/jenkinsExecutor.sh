@@ -22,7 +22,9 @@ else
 fi
 
 export HOME=/root
+[[ ! -z "$mountDiskCmd" ]] && ${mountDiskCmd}
 ./libv2ray.sh
+[[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}
 
 [[ $? != 0 ]] &&  echo "fatal error occur exit 1" && exit 1
 
