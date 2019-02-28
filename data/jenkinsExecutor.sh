@@ -26,14 +26,17 @@ export HOME=/root
 ./libv2ray.sh
 exit_code=$?
 
-[[ ${exit_code} != 0 ]] &&  echo "fatal error occur exit 1" \
+[[ ${exit_code} != 0 ]] \
+&&  echo "fatal error occur exit 1" \
 && { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
 
 [[ ! -f "$INSTALL_CACHE_PATH/${AAR}" ]] \
-&& { echo "fatal error aar not exist"; [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
+&& echo "fatal error aar not exist" \
+&& { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
 
 [[ ! -f "$V2RAY_CORE_BUILD_TAG" ]] \
-&& { echo "fatal v2ray core build tag not exist"; [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
+&& echo "fatal v2ray core build tag not exist" \
+&& { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
 
 [[ -z "${WORKSPACE}" || ! -d "${WORKSPACE}" ]] \
 && echo "fatal error jenkins workspace not exits" \
