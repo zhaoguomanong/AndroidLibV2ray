@@ -64,8 +64,9 @@ installGoEnv() {
     cd ${INSTALL_CACHE_PATH}
     export GOROOT=/usr/local/go
     export GOPATH="$under_home/gopath"
-    [[ ! -z "$override_gopath" && -d "$override_gopath" ]] \
-    && export GOPATH="$override_gopath"
+    [[ ! -z "$override_gopath" ]] \
+    && { [[ ! -d "$override_gopath" ]] && mkdir -p "$override_gopath"; \
+    export GOPATH="$override_gopath"; }
     echo "GOPATH=$GOPATH"
     export PATH=${GOPATH}/bin:${GOROOT}/bin:$PATH
     if [ -d ${GOROOT} ];then
