@@ -19,7 +19,7 @@ export domains="$@"
 
 yourSSLDomainName=$(echo "$domains" | awk '{print $1}')
 
-export override_under_home="/home/jenkins"
+export override_under_home="/home/jenkins/share_disk"
 findUnderUserHome
 nginxRuntimePath="$under_home/.libv2ray/nginx/.runtime"
 
