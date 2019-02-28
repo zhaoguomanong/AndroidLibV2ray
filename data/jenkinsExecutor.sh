@@ -25,18 +25,23 @@ export HOME=/root
 [[ ! -z "$mountDiskCmd" ]] && ${mountDiskCmd}
 ./libv2ray.sh
 exit_code=$?
-[[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}
 
-[[ ${exit_code} != 0 ]] &&  echo "fatal error occur exit 1" && exit 1
+[[ ${exit_code} != 0 ]] &&  echo "fatal error occur exit 1" \
+&& { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
 
-[[ ! -f "$INSTALL_CACHE_PATH/${AAR}" ]] && { echo "fatal error aar not exist"; exit 1; }
+[[ ! -f "$INSTALL_CACHE_PATH/${AAR}" ]] \
+&& { echo "fatal error aar not exist"; [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
 
-[[ ! -f "$V2RAY_CORE_BUILD_TAG" ]] && { echo "fatal v2ray core build tag not exist"; exit 1; }
+[[ ! -f "$V2RAY_CORE_BUILD_TAG" ]] \
+&& { echo "fatal v2ray core build tag not exist"; [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
 
 [[ -z "${WORKSPACE}" || ! -d "${WORKSPACE}" ]] \
-&& echo "fatal error jenkins workspace not exits" && exit 1
+&& echo "fatal error jenkins workspace not exits" \
+&& { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
 
 cp -f "$INSTALL_CACHE_PATH/${AAR}" ${WORKSPACE}/
 cp -f "$V2RAY_CORE_BUILD_TAG" ${WORKSPACE}/
+
+[[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}
 
 exit 0
