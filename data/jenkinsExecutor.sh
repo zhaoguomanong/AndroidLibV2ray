@@ -1,5 +1,44 @@
 #!/bin/bash
 
+#for small disk size vps using
+#using sshfs to mount folder for saving android sdk etc.
+umountDisk() {
+    [[ -z "$umountDiskCmd" || -z "$mountDiskCmd" || -z "$mountPoint" ]] \
+    && echo "no need using extra disk" && return 0
+
+    df | grep "$mountPoint" > /dev/null 2>&1 \
+    || { echo "$mountPoint not mounted, return now"; return 0; }
+
+    ${umountDiskCmd}
+
+    df | grep "$mountPoint" > /dev/null 2>&1 \
+    && echo "Fatal error: umount $mountPoint failed" \
+    || { echo "umount $mountPoint success, disk info:"; df -h; }
+
+    return 0
+}
+
+#for small disk size vps using
+#using sshfs to mount folder for saving android sdk etc.
+mountDisk() {
+    [[ -z "$umountDiskCmd" || -z "$mountDiskCmd" || -z "$mountPoint" ]] \
+    && echo "no need using extra disk" && return 0
+
+    df | grep "$mountPoint" > /dev/null 2>&1 \
+    && echo "$mountPoint already been mounted, try umount it first" \
+    && umountDisk
+
+    ${mountDiskCmd}
+
+    df | grep "$mountPoint" > /dev/null 2>&1 \
+    || { echo "Fatal error: mount $mountPoint failed, exit now"; exit 1; }
+
+    echo "mount $mountPoint success, disk info:"
+    df -h
+
+    return 0
+}
+
 cd `dirname $0`
 SCRIPT_PATH=`pwd`
 find . -name "*.sh" | xargs chmod a+x
@@ -22,29 +61,27 @@ else
 fi
 
 export HOME=/root
-[[ ! -z "$mountDiskCmd" ]] && ${mountDiskCmd}
+mountDisk
 ./libv2ray.sh
-exit_code=$?
 
-[[ ${exit_code} != 0 ]] \
+[[ $? != 0 ]] \
 &&  echo "fatal error occur exit 1" \
-&& { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
+&& { umountDisk; exit 1; }
 
 [[ ! -f "$INSTALL_CACHE_PATH/${AAR}" ]] \
 && echo "fatal error aar not exist" \
-&& { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
+&& { umountDisk; exit 1; }
 
 [[ ! -f "$V2RAY_CORE_BUILD_TAG" ]] \
 && echo "fatal v2ray core build tag not exist" \
-&& { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
+&& { umountDisk; exit 1; }
 
 [[ -z "${WORKSPACE}" || ! -d "${WORKSPACE}" ]] \
 && echo "fatal error jenkins workspace not exits" \
-&& { [[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}; exit 1; }
+&& { umountDisk; exit 1; }
 
 cp -f "$INSTALL_CACHE_PATH/${AAR}" ${WORKSPACE}/
 cp -f "$V2RAY_CORE_BUILD_TAG" ${WORKSPACE}/
 
-[[ ! -z "$umountDiskCmd" ]] && ${umountDiskCmd}
-
+umountDisk
 exit 0
