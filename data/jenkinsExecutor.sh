@@ -84,4 +84,10 @@ cp -f "$INSTALL_CACHE_PATH/${AAR}" ${WORKSPACE}/
 cp -f "$V2RAY_CORE_BUILD_TAG" ${WORKSPACE}/
 
 umountDisk
+if [[ "$cleanGoCache" = "true" ]];then
+    homeCache="/root/.cache"
+    [[ -d "$homeCache" ]] && { echo "clean .cache now"; rm -rf "$homeCache"; }
+else
+    echo "no need clean gradle cache"
+fi
 exit 0
