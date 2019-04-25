@@ -5,86 +5,9 @@ fromLocally=0
 V2RAY_CORE_URL="v2ray.com/core"
 V2RAY_EXT_URL="v2ray.com/ext"
 LIBV2RAY_GIT_URL="github.com/zhaoguomanong/AndroidLibV2ray"
-
-
-OS_NOT_SUPPORTED_HINT="This script only support CentOS 6+ Ubuntu 12.04+ Debian 7+"
-UBUNTU="Ubuntu"
-CENTOS="CentOS"
-DISTRO='unknown'
-DISTRO_VERSION=""
-CMD_INSTALL=""
-CMD_UNINSTALL=""
-CMD_AUTO_REMOVE=""
-CMD_UPDATE=""
-CMD_DIST_UPGRADE=""
-CMD_ADD_KEY=""
-
-getDistName() {
-    if grep -Eqi ${CENTOS} /etc/issue || grep -Eq ${CENTOS} /etc/*-release; then
-        DISTRO=${CENTOS}
-        DISTRO_VERSION=$(cat /etc/centos-release | sed -r 's/.* ([0-9]+)\..*/\1/')
-        CMD_INSTALL="yum -y install"
-        CMD_UNINSTALL="yum -y remove"
-        CMD_AUTO_REMOVE="yum -y autoremove"
-        CMD_UPDATE="yum -y makecache"
-        CMD_DIST_UPGRADE="yum -y update"
-        CMD_ADD_KEY="rpm --import"
-        if [ "$DISTRO_VERSION" = 6 ];then
-            #centos 6 not support it
-            CMD_AUTO_REMOVE=""
-        fi
-    elif grep -Eqi ${DEBIAN} /etc/issue || grep -Eq ${DEBIAN} /etc/*-release; then
-        local debianCode=$(awk -F"[)(]+" '/VERSION=/ {print $2}' /etc/os-release \
-        | awk '{print $1}' \
-        | awk '{ print tolower($0) }')
-        DISTRO=${DEBIAN}
-        DISTRO_VERSION="$debianCode"
-        CMD_INSTALL="apt-get -y install"
-        CMD_UNINSTALL="apt-get -y remove"
-        CMD_UPDATE="apt-get -y update"
-        CMD_DIST_UPGRADE="apt-get -y -qq dist-upgrade"
-        CMD_ADD_KEY="apt-key add"
-    elif grep -Eqi ${UBUNTU} /etc/issue || grep -Eq ${UBUNTU} /etc/*-release; then
-        DISTRO=${UBUNTU}
-        if [ -f /etc/lsb-release ];then
-            source /etc/lsb-release
-            DISTRO_VERSION="${DISTRIB_CODENAME}"
-        elif [ -f /etc/os-release ];then
-            source /etc/os-release
-            DISTRO_VERSION="$VERSION_CODENAME"
-        fi
-        CMD_INSTALL="apt-get -y install"
-        CMD_UNINSTALL="apt-get -y remove"
-        CMD_AUTO_REMOVE="apt-get -y autoremove"
-        CMD_UPDATE="apt-get -y update"
-        CMD_DIST_UPGRADE="apt-get -y dist-upgrade"
-        CMD_ADD_KEY="apt-key add"
-    else
-        DISTRO='unknown'
-        DISTRO_VERSION=""
-        CMD_INSTALL=""
-        CMD_UNINSTALL=""
-        CMD_AUTO_REMOVE=""
-        CMD_UPDATE=""
-        CMD_DIST_UPGRADE=""
-        CMD_ADD_KEY=""
-        echo ${OS_NOT_SUPPORTED_HINT}
-        exit -1
-    fi
-    if [ ${DISTRO} = ${CENTOS} ];then
-        expr ${DISTRO_VERSION} + 1 &>/dev/null 2>&1
-        if [ $? != 0 ];then
-            #not digit
-            DISTRO_VERSION=""
-        fi
-        if [ -z ${DISTRO_VERSION} ] || [ ${DISTRO_VERSION} -lt 6 ];then
-            echo ${OS_NOT_SUPPORTED_HINT}
-            echo "DISTRO=$DISTRO, DISTRO_VERSION = $DISTRO_VERSION"
-            exit -1
-        fi
-    fi
-    echo "DISTRO=$DISTRO, DISTRO_VERSION = $DISTRO_VERSION"
-}
+CMD_UPDATE="apt-get -y update"
+CMD_INSTALL="apt-get -y install"
+CMD_DIST_UPGRADE="apt-get -y dist-upgrade"
 
 clearPb() {
     if [ -d ~/pbinst ];then
@@ -115,15 +38,8 @@ fileExistenceCheck() {
 
 installBasicDep() {
     which git > /dev/null 2>&1 || ${CMD_INSTALL} git
-    if [ ${DISTRO} = ${CENTOS} ];then
-        OPEN_JDK="java-1.8.0-openjdk*"
-        OPEN_JDK_HOME="java-1.8.0-openjdk"
-    else
-        OPEN_JDK="openjdk-8-jdk"
-        OPEN_JDK_HOME="java-8-openjdk-amd64"
-    fi
-    which java > /dev/null 2>&1 || ${CMD_INSTALL} ${OPEN_JDK}
-    export JAVA_HOME=/usr/lib/jvm/${OPEN_JDK_HOME}
+    which java > /dev/null 2>&1 || ${CMD_INSTALL} openjdk-8-jdk
+    export JAVA_HOME=/usr/lib/jvm/java-8-openjdk-amd64
     export PATH=${JAVA_HOME}/bin:$PATH
 #    if [ -d ${ANDROID_HOME} ] \
 #    && [ -d ${ANDROID_NDK_HOME} ];then
@@ -132,13 +48,11 @@ installBasicDep() {
 #        return
 #    fi
     [[ -d ${ANDROID_HOME} ]] && return
-    [[ ${DISTRO} != ${CENTOS} ]] \
-    && dpkg --add-architecture i386
+    dpkg --add-architecture i386
     ${CMD_UPDATE}
     ${CMD_DIST_UPGRADE}
     ${CMD_INSTALL} curl
-    [[ ${DISTRO} != ${CENTOS} ]] \
-    && ${CMD_INSTALL} software-properties-common
+    ${CMD_INSTALL} software-properties-common
     ${CMD_INSTALL} libc6:i386 libstdc++6:i386 zlib1g:i386 lib32z1 expect
     ${CMD_INSTALL} zip unzip make expect # NDK stuff
     ${CMD_INSTALL} build-essential wget
@@ -540,7 +454,6 @@ checkoutV2rayCoreVersion() {
 startTime=$(date +%s.%N)
 cd `dirname $0`
 SCRIPT_PATH=`pwd`
-getDistName
 find . -name "*.sh" | xargs chmod a+x
 source ./CommonUtils.sh
 source ./constants.sh
