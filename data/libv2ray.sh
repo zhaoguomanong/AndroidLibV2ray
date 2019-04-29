@@ -215,6 +215,7 @@ processSpecialVersions() {
     local core_TAG_V_4_1="v4.1"
     local current_timestamp="$1"
     local isEmpty=""
+    local v2ray_core_tag="$2"
 
     #fix bug for empty vendor websocket & socks (v3.28,v3.29 etc.) start
     if [ -d ${GOPATH}/src/${V2RAY_CORE_URL}/vendor/websocket ] \
@@ -242,9 +243,15 @@ processSpecialVersions() {
     local v3_10=$(git log -1 --format=%ct "$core_TAG_V_3_10")
     local v3_17=$(git log -1 --format=%ct "$core_TAG_V_3_17")
     local v4_1=$(git log -1 --format=%ct "$core_TAG_V_4_1")
-    if [ ${current_timestamp} -ge ${v3_10} ] \
-    && [ ${current_timestamp} -lt ${v3_17} ];then
-    #[v3.10, v3.17) ext has no tags during this time
+
+    [[ -d ${GOPATH}/src/${V2RAY_EXT_URL} ]] \
+    && cd ${GOPATH}/src/${V2RAY_EXT_URL}
+    local ext_has_tag=0
+    git tag | grep -iE "^$v2ray_core_tag$" > /dev/null 2>&1 \
+    && ext_has_tag=1
+
+    if [ ${ext_has_tag} = 0 ];then
+    #ext has no tags
     #use commit id to select ext version
         findOptimizedCommitId "v2ray-ext" "${GOPATH}/src/${V2RAY_EXT_URL}" "${current_timestamp}" extId
         if [ -z "$extId" ];then
@@ -383,7 +390,7 @@ checkoutV2rayCoreVersion() {
         [[ -z "$latestReleaseTag" ]] \
         && echo "checkoutV2rayCoreVersion: fatal error could not found latest release tag" \
         && exit 1
-        v2ray_core_version="$latestReleaseTag"
+        export v2ray_core_version="$latestReleaseTag"
     fi
     git tag | grep -iE "^$v2ray_core_version$" > /dev/null 2>&1
     [[ $? != 0 ]] \
@@ -398,7 +405,8 @@ checkoutV2rayCoreVersion() {
     cd ${GOPATH}/src/${V2RAY_CORE_URL}
     git checkout ${version}
     cd ${GOPATH}/src/${V2RAY_EXT_URL}
-    git checkout ${version}
+    git tag | grep -iE "^$version$" > /dev/null 2>&1 \
+    && git checkout ${version}
     #checkout v2ray tag end
 
     #checkout vendor for v2ray-core start
@@ -445,7 +453,7 @@ checkoutV2rayCoreVersion() {
         git checkout "$OPTIMIZEDTAG"
         echo "checkoutV2rayCoreVersion: checking ${vendorName} ----> $OPTIMIZEDTAG"
     done
-    processSpecialVersions "$coreTagTimestamp"
+    processSpecialVersions "$coreTagTimestamp" "$version"
     #checkout vendor for v2ray-core end
     cd ${INSTALL_CACHE_PATH}
     return 0
